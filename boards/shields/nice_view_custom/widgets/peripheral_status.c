@@ -23,38 +23,38 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 #include "peripheral_status.h"
 
-LV_IMG_DECLARE(hammerbeam1);
-LV_IMG_DECLARE(hammerbeam2);
-LV_IMG_DECLARE(hammerbeam3);
-LV_IMG_DECLARE(hammerbeam4);
-LV_IMG_DECLARE(hammerbeam5);
-LV_IMG_DECLARE(hammerbeam6);
-LV_IMG_DECLARE(hammerbeam7);
-LV_IMG_DECLARE(hammerbeam8);
-LV_IMG_DECLARE(hammerbeam9);
-LV_IMG_DECLARE(hammerbeam10);
-LV_IMG_DECLARE(hammerbeam11);
-LV_IMG_DECLARE(hammerbeam12);
-LV_IMG_DECLARE(hammerbeam13);
-LV_IMG_DECLARE(hammerbeam14);
-LV_IMG_DECLARE(hammerbeam15);
-LV_IMG_DECLARE(hammerbeam16);
-LV_IMG_DECLARE(hammerbeam17);
-LV_IMG_DECLARE(hammerbeam18);
-LV_IMG_DECLARE(hammerbeam19);
-LV_IMG_DECLARE(hammerbeam20);
-LV_IMG_DECLARE(hammerbeam21);
-LV_IMG_DECLARE(hammerbeam22);
-LV_IMG_DECLARE(hammerbeam23);
-LV_IMG_DECLARE(hammerbeam24);
-LV_IMG_DECLARE(hammerbeam25);
-LV_IMG_DECLARE(hammerbeam26);
-LV_IMG_DECLARE(hammerbeam27);
-LV_IMG_DECLARE(hammerbeam28);
-LV_IMG_DECLARE(hammerbeam29);
-LV_IMG_DECLARE(hammerbeam30);
+LV_IMAGE_DECLARE(hammerbeam1);
+LV_IMAGE_DECLARE(hammerbeam2);
+LV_IMAGE_DECLARE(hammerbeam3);
+LV_IMAGE_DECLARE(hammerbeam4);
+LV_IMAGE_DECLARE(hammerbeam5);
+LV_IMAGE_DECLARE(hammerbeam6);
+LV_IMAGE_DECLARE(hammerbeam7);
+LV_IMAGE_DECLARE(hammerbeam8);
+LV_IMAGE_DECLARE(hammerbeam9);
+LV_IMAGE_DECLARE(hammerbeam10);
+LV_IMAGE_DECLARE(hammerbeam11);
+LV_IMAGE_DECLARE(hammerbeam12);
+LV_IMAGE_DECLARE(hammerbeam13);
+LV_IMAGE_DECLARE(hammerbeam14);
+LV_IMAGE_DECLARE(hammerbeam15);
+LV_IMAGE_DECLARE(hammerbeam16);
+LV_IMAGE_DECLARE(hammerbeam17);
+LV_IMAGE_DECLARE(hammerbeam18);
+LV_IMAGE_DECLARE(hammerbeam19);
+LV_IMAGE_DECLARE(hammerbeam20);
+LV_IMAGE_DECLARE(hammerbeam21);
+LV_IMAGE_DECLARE(hammerbeam22);
+LV_IMAGE_DECLARE(hammerbeam23);
+LV_IMAGE_DECLARE(hammerbeam24);
+LV_IMAGE_DECLARE(hammerbeam25);
+LV_IMAGE_DECLARE(hammerbeam26);
+LV_IMAGE_DECLARE(hammerbeam27);
+LV_IMAGE_DECLARE(hammerbeam28);
+LV_IMAGE_DECLARE(hammerbeam29);
+LV_IMAGE_DECLARE(hammerbeam30);
 
-const lv_img_dsc_t *anim_imgs[] = {
+const lv_image_dsc_t *anim_imgs[] = {
     &hammerbeam1,
     &hammerbeam2,
     &hammerbeam3,
@@ -96,6 +96,7 @@ struct peripheral_status_state {
 
 static void draw_top(lv_obj_t *widget, lv_color_t cbuf[], const struct status_state *state) {
     lv_obj_t *canvas = lv_obj_get_child(widget, 0);
+    lv_layer_t *layer = lv_canvas_get_layer(canvas);
 
     lv_draw_label_dsc_t label_dsc;
     init_label_dsc(&label_dsc, LVGL_FOREGROUND, &lv_font_montserrat_16, LV_TEXT_ALIGN_RIGHT);
@@ -103,14 +104,16 @@ static void draw_top(lv_obj_t *widget, lv_color_t cbuf[], const struct status_st
     init_rect_dsc(&rect_black_dsc, LVGL_BACKGROUND);
 
     // Fill background
-    lv_canvas_draw_rect(canvas, 0, 0, CANVAS_SIZE, CANVAS_SIZE, &rect_black_dsc);
+    lv_area_t bg_area = {0, 0, CANVAS_SIZE - 1, CANVAS_SIZE - 1};
+    lv_draw_rect(layer, &rect_black_dsc, &bg_area);
 
     // Draw battery
     draw_battery(canvas, state);
 
     // Draw output status
-    lv_canvas_draw_text(canvas, 0, 0, CANVAS_SIZE, &label_dsc,
-                        state->connected ? LV_SYMBOL_WIFI : LV_SYMBOL_CLOSE);
+    label_dsc.text = state->connected ? LV_SYMBOL_WIFI : LV_SYMBOL_CLOSE;
+    lv_area_t text_area = {0, 0, CANVAS_SIZE - 1, 20};
+    lv_draw_label(layer, &label_dsc, &text_area);
 
     // Rotate canvas
     rotate_canvas(canvas, cbuf);
@@ -174,7 +177,7 @@ int zmk_widget_status_init(struct zmk_widget_status *widget, lv_obj_t *parent) {
     lv_obj_set_size(widget->obj, 160, 68);
     lv_obj_t *top = lv_canvas_create(widget->obj);
     lv_obj_align(top, LV_ALIGN_TOP_RIGHT, 0, 0);
-    lv_canvas_set_buffer(top, widget->cbuf, CANVAS_SIZE, CANVAS_SIZE, LV_IMG_CF_TRUE_COLOR);
+    lv_canvas_set_buffer(top, widget->cbuf, CANVAS_SIZE, CANVAS_SIZE, LV_COLOR_FORMAT_NATIVE);
 
     lv_obj_t * art = lv_animimg_create(widget->obj);
     lv_obj_center(art);
@@ -182,7 +185,7 @@ int zmk_widget_status_init(struct zmk_widget_status *widget, lv_obj_t *parent) {
     lv_animimg_set_duration(art, CONFIG_CUSTOM_ANIMATION_SPEED);
     lv_animimg_set_repeat_count(art, LV_ANIM_REPEAT_INFINITE);
     lv_animimg_start(art);
-    
+
     lv_obj_align(art, LV_ALIGN_TOP_LEFT, 0, 0);
     sys_slist_append(&widgets, &widget->node);
     widget_battery_status_init();
