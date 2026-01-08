@@ -96,7 +96,8 @@ struct peripheral_status_state {
 
 static void draw_top(lv_obj_t *widget, lv_color_t cbuf[], const struct status_state *state) {
     lv_obj_t *canvas = lv_obj_get_child(widget, 0);
-    lv_layer_t *layer = lv_canvas_get_layer(canvas);
+    lv_layer_t layer;
+    lv_canvas_init_layer(canvas, &layer);
 
     lv_draw_label_dsc_t label_dsc;
     init_label_dsc(&label_dsc, LVGL_FOREGROUND, &lv_font_montserrat_16, LV_TEXT_ALIGN_RIGHT);
@@ -105,7 +106,7 @@ static void draw_top(lv_obj_t *widget, lv_color_t cbuf[], const struct status_st
 
     // Fill background
     lv_area_t bg_area = {0, 0, CANVAS_SIZE - 1, CANVAS_SIZE - 1};
-    lv_draw_rect(layer, &rect_black_dsc, &bg_area);
+    lv_draw_rect(&layer, &rect_black_dsc, &bg_area);
 
     // Draw battery
     draw_battery(canvas, state);
@@ -113,7 +114,7 @@ static void draw_top(lv_obj_t *widget, lv_color_t cbuf[], const struct status_st
     // Draw output status
     label_dsc.text = state->connected ? LV_SYMBOL_WIFI : LV_SYMBOL_CLOSE;
     lv_area_t text_area = {0, 0, CANVAS_SIZE - 1, 20};
-    lv_draw_label(layer, &label_dsc, &text_area);
+    lv_draw_label(&layer, &label_dsc, &text_area);
 
     // Rotate canvas
     rotate_canvas(canvas, cbuf);
