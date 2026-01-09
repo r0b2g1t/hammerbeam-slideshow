@@ -18,7 +18,7 @@ void rotate_canvas(lv_obj_t *canvas, lv_color_t cbuf[]) {
     img.header.cf = LV_COLOR_FORMAT_NATIVE;
     img.header.w = CANVAS_SIZE;
     img.header.h = CANVAS_SIZE;
-    img.header.stride = CANVAS_SIZE * sizeof(lv_color_t);
+    img.header.stride = lv_draw_buf_width_to_stride(CANVAS_SIZE, LV_COLOR_FORMAT_NATIVE);
 
     lv_canvas_fill_bg(canvas, LVGL_BACKGROUND, LV_OPA_COVER);
     
