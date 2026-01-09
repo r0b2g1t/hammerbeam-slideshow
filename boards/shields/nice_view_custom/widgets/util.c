@@ -44,10 +44,7 @@ void rotate_canvas(lv_obj_t *canvas, lv_color_t cbuf[]) {
     lv_obj_invalidate(canvas);
 }
 
-void draw_battery(lv_obj_t *canvas, const struct status_state *state) {
-    lv_layer_t layer;
-    lv_canvas_init_layer(canvas, &layer);
-    
+void draw_battery(lv_layer_t *layer, const struct status_state *state) {
     lv_draw_rect_dsc_t rect_black_dsc;
     init_rect_dsc(&rect_black_dsc, LVGL_BACKGROUND);
     lv_draw_rect_dsc_t rect_white_dsc;
@@ -56,19 +53,19 @@ void draw_battery(lv_obj_t *canvas, const struct status_state *state) {
     lv_area_t rect;
 
     rect = (lv_area_t){0, 2, 29, 13};
-    lv_draw_rect(&layer, &rect_white_dsc, &rect);
+    lv_draw_rect(layer, &rect_white_dsc, &rect);
 
     rect = (lv_area_t){1, 3, 27, 12};
-    lv_draw_rect(&layer, &rect_black_dsc, &rect);
+    lv_draw_rect(layer, &rect_black_dsc, &rect);
 
     rect = (lv_area_t){2, 4, 2 + (state->battery + 2) / 4, 11};
-    lv_draw_rect(&layer, &rect_white_dsc, &rect);
+    lv_draw_rect(layer, &rect_white_dsc, &rect);
 
     rect = (lv_area_t){30, 5, 32, 10};
-    lv_draw_rect(&layer, &rect_white_dsc, &rect);
+    lv_draw_rect(layer, &rect_white_dsc, &rect);
 
     rect = (lv_area_t){31, 6, 31, 9};
-    lv_draw_rect(&layer, &rect_black_dsc, &rect);
+    lv_draw_rect(layer, &rect_black_dsc, &rect);
 
     if (state->charging) {
         lv_draw_image_dsc_t img_dsc;
@@ -76,7 +73,7 @@ void draw_battery(lv_obj_t *canvas, const struct status_state *state) {
         img_dsc.src = &bolt;
         
         lv_area_t img_area = {9, -1, 9 + bolt.header.w - 1, -1 + bolt.header.h - 1};
-        lv_draw_image(&layer, &img_dsc, &img_area);
+        lv_draw_image(layer, &img_dsc, &img_area);
     }
 }
 

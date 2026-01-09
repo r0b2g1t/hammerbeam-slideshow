@@ -46,7 +46,8 @@ struct wpm_status_state {
 
 static void draw_top(lv_obj_t *widget, lv_color_t cbuf[], const struct status_state *state) {
     lv_obj_t *canvas = lv_obj_get_child(widget, 0);
-    lv_layer_t *layer = lv_canvas_get_layer(canvas);
+    lv_layer_t layer;
+    lv_canvas_init_layer(canvas, &layer);
 
     lv_draw_label_dsc_t label_dsc;
     init_label_dsc(&label_dsc, LVGL_FOREGROUND, &lv_font_montserrat_16, LV_TEXT_ALIGN_RIGHT);
@@ -61,10 +62,10 @@ static void draw_top(lv_obj_t *widget, lv_color_t cbuf[], const struct status_st
 
     // Fill background
     lv_area_t bg_area = {0, 0, CANVAS_SIZE - 1, CANVAS_SIZE - 1};
-    lv_draw_rect(layer, &rect_black_dsc, &bg_area);
+    lv_draw_rect(&layer, &rect_black_dsc, &bg_area);
 
     // Draw battery
-    draw_battery(canvas, state);
+    draw_battery(&layer, state);
 
     // Draw output status
     char output_text[10] = {};
@@ -88,20 +89,20 @@ static void draw_top(lv_obj_t *widget, lv_color_t cbuf[], const struct status_st
 
     label_dsc.text = output_text;
     lv_area_t text_area = {0, 0, CANVAS_SIZE - 1, 20}; 
-    lv_draw_label(layer, &label_dsc, &text_area);
+    lv_draw_label(&layer, &label_dsc, &text_area);
 
     // Draw WPM
     lv_area_t wpm_rect = {0, 21, 67, 62};
-    lv_draw_rect(layer, &rect_white_dsc, &wpm_rect);
+    lv_draw_rect(&layer, &rect_white_dsc, &wpm_rect);
     
     lv_area_t wpm_inner_rect = {1, 22, 66, 61};
-    lv_draw_rect(layer, &rect_black_dsc, &wpm_inner_rect);
+    lv_draw_rect(&layer, &rect_black_dsc, &wpm_inner_rect);
 
     char wpm_text[6] = {};
     snprintf(wpm_text, sizeof(wpm_text), "%d", state->wpm[9]);
     label_dsc_wpm.text = wpm_text;
     lv_area_t wpm_text_area = {42, 52, 66, 60};
-    lv_draw_label(layer, &label_dsc_wpm, &wpm_text_area);
+    lv_draw_label(&layer, &label_dsc_wpm, &wpm_text_area);
 
     int max = 0;
     int min = 256;
@@ -129,8 +130,10 @@ static void draw_top(lv_obj_t *widget, lv_color_t cbuf[], const struct status_st
     for (int i = 0; i < 9; i++) {
         line_dsc.p1 = points[i];
         line_dsc.p2 = points[i+1];
-        lv_draw_line(layer, &line_dsc);
+        lv_draw_line(&layer, &line_dsc);
     }
+    
+    lv_canvas_finish_layer(canvas, &layer);
 
     // Rotate canvas
     rotate_canvas(canvas, cbuf);
@@ -138,7 +141,8 @@ static void draw_top(lv_obj_t *widget, lv_color_t cbuf[], const struct status_st
 
 static void draw_middle(lv_obj_t *widget, lv_color_t cbuf[], const struct status_state *state) {
     lv_obj_t *canvas = lv_obj_get_child(widget, 1);
-    lv_layer_t *layer = lv_canvas_get_layer(canvas);
+    lv_layer_t layer;
+    lv_canvas_init_layer(canvas, &layer);
 
     lv_draw_rect_dsc_t rect_black_dsc;
     init_rect_dsc(&rect_black_dsc, LVGL_BACKGROUND);
@@ -155,7 +159,7 @@ static void draw_middle(lv_obj_t *widget, lv_color_t cbuf[], const struct status
 
     // Fill background
     lv_area_t bg_area = {0, 0, CANVAS_SIZE - 1, CANVAS_SIZE - 1};
-    lv_draw_rect(layer, &rect_black_dsc, &bg_area);
+    lv_draw_rect(&layer, &rect_black_dsc, &bg_area);
 
     // Draw circles
     int circle_offsets[5][2] = {
@@ -170,7 +174,7 @@ static void draw_middle(lv_obj_t *widget, lv_color_t cbuf[], const struct status
         arc_dsc.radius = 13;
         arc_dsc.start_angle = 0;
         arc_dsc.end_angle = 360;
-        lv_draw_arc(layer, &arc_dsc);
+        lv_draw_arc(&layer, &arc_dsc);
 
         if (selected) {
             arc_dsc_filled.center.x = circle_offsets[i][0];
@@ -178,7 +182,7 @@ static void draw_middle(lv_obj_t *widget, lv_color_t cbuf[], const struct status
             arc_dsc_filled.radius = 9;
             arc_dsc_filled.start_angle = 0;
             arc_dsc_filled.end_angle = 360;
-            lv_draw_arc(layer, &arc_dsc_filled);
+            lv_draw_arc(&layer, &arc_dsc_filled);
         }
 
         char label[2];
@@ -187,8 +191,10 @@ static void draw_middle(lv_obj_t *widget, lv_color_t cbuf[], const struct status
         lv_draw_label_dsc_t *dsc = selected ? &label_dsc_black : &label_dsc;
         dsc->text = label;
         lv_area_t label_area = {circle_offsets[i][0] - 8, circle_offsets[i][1] - 10, circle_offsets[i][0] + 8, circle_offsets[i][1] + 10};
-        lv_draw_label(layer, dsc, &label_area);
+        lv_draw_label(&layer, dsc, &label_area);
     }
+
+    lv_canvas_finish_layer(canvas, &layer);
 
     // Rotate canvas
     rotate_canvas(canvas, cbuf);
@@ -196,7 +202,8 @@ static void draw_middle(lv_obj_t *widget, lv_color_t cbuf[], const struct status
 
 static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status_state *state) {
     lv_obj_t *canvas = lv_obj_get_child(widget, 2);
-    lv_layer_t *layer = lv_canvas_get_layer(canvas);
+    lv_layer_t layer;
+    lv_canvas_init_layer(canvas, &layer);
 
     lv_draw_rect_dsc_t rect_black_dsc;
     init_rect_dsc(&rect_black_dsc, LVGL_BACKGROUND);
@@ -205,7 +212,7 @@ static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status
 
     // Fill background
     lv_area_t bg_area = {0, 0, CANVAS_SIZE - 1, CANVAS_SIZE - 1};
-    lv_draw_rect(layer, &rect_black_dsc, &bg_area);
+    lv_draw_rect(&layer, &rect_black_dsc, &bg_area);
 
     // Draw layer
     char text[32] = {};
@@ -217,7 +224,9 @@ static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status
     }
     
     lv_area_t text_area = {0, 5, 67, 30};
-    lv_draw_label(layer, &label_dsc, &text_area);
+    lv_draw_label(&layer, &label_dsc, &text_area);
+
+    lv_canvas_finish_layer(canvas, &layer);
 
     // Rotate canvas
     rotate_canvas(canvas, cbuf);
