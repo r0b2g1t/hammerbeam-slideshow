@@ -15,6 +15,11 @@
 #define LVGL_FOREGROUND                                                                            \
     IS_ENABLED(CONFIG_NICE_VIEW_WIDGET_INVERTED) ? lv_color_white() : lv_color_black()
 
+#define LVGL_BACKGROUND_32                                                                         \
+    (IS_ENABLED(CONFIG_NICE_VIEW_WIDGET_INVERTED) ? ((lv_color32_t){.red=0, .green=0, .blue=0, .alpha=255}) : ((lv_color32_t){.red=255, .green=255, .blue=255, .alpha=255}))
+#define LVGL_FOREGROUND_32                                                                         \
+    (IS_ENABLED(CONFIG_NICE_VIEW_WIDGET_INVERTED) ? ((lv_color32_t){.red=255, .green=255, .blue=255, .alpha=255}) : ((lv_color32_t){.red=0, .green=0, .blue=0, .alpha=255}))
+
 struct status_state {
     uint8_t battery;
     bool charging;
