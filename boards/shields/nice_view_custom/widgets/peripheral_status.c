@@ -105,8 +105,8 @@ static void draw_top(lv_obj_t *widget, lv_color_t cbuf[], const struct status_st
     init_rect_dsc(&rect_black_dsc, LVGL_BACKGROUND);
 
     // Fill background
-    lv_area_t bg_area = {0, 0, CANVAS_SIZE - 1, CANVAS_SIZE - 1};
-    lv_draw_rect(&layer, &rect_black_dsc, &bg_area);
+    // lv_area_t bg_area = {0, 0, CANVAS_SIZE - 1, CANVAS_SIZE - 1};
+    // lv_draw_rect(&layer, &rect_black_dsc, &bg_area);
 
     // Draw battery
     draw_battery(&layer, state);
@@ -178,20 +178,21 @@ ZMK_SUBSCRIPTION(widget_peripheral_status, zmk_split_peripheral_status_changed);
 int zmk_widget_status_init(struct zmk_widget_status *widget, lv_obj_t *parent) {
     widget->obj = lv_obj_create(parent);
     lv_obj_set_size(widget->obj, 160, 68);
-    lv_obj_t *top = lv_canvas_create(widget->obj);
-    lv_obj_align(top, LV_ALIGN_TOP_RIGHT, 0, 0);
-    lv_canvas_set_buffer(top, widget->cbuf, CANVAS_SIZE, CANVAS_SIZE, LV_COLOR_FORMAT_NATIVE);
-    lv_canvas_set_palette(top, 0, LVGL_BACKGROUND_32);
-    lv_canvas_set_palette(top, 1, LVGL_FOREGROUND_32);
-
+    
     lv_obj_t * art = lv_animimg_create(widget->obj);
     lv_obj_center(art);
     lv_animimg_set_src(art, (const void **) anim_imgs, 30);
     lv_animimg_set_duration(art, CONFIG_CUSTOM_ANIMATION_SPEED);
     lv_animimg_set_repeat_count(art, LV_ANIM_REPEAT_INFINITE);
     lv_animimg_start(art);
+    lv_obj_align(art, LV_ALIGN_TOP_LEFT, 0, 0);
 
-    lv_obj_align(art, LV_ALIGN_TOP_LEFT, 24, 0);
+    lv_obj_t *top = lv_canvas_create(widget->obj);
+    lv_obj_align(top, LV_ALIGN_TOP_RIGHT, 0, 0);
+    lv_canvas_set_buffer(top, widget->cbuf, CANVAS_SIZE, CANVAS_SIZE, LV_COLOR_FORMAT_NATIVE);
+    lv_canvas_set_palette(top, 0, LVGL_BACKGROUND_32);
+    lv_canvas_set_palette(top, 1, LVGL_FOREGROUND_32);
+
     sys_slist_append(&widgets, &widget->node);
     widget_battery_status_init();
     widget_peripheral_status_init();

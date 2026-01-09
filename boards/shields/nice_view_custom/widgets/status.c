@@ -61,8 +61,8 @@ static void draw_top(lv_obj_t *widget, lv_color_t cbuf[], const struct status_st
     init_line_dsc(&line_dsc, LVGL_FOREGROUND, 1);
 
     // Fill background
-    lv_area_t bg_area = {0, 0, CANVAS_SIZE - 1, CANVAS_SIZE - 1};
-    lv_draw_rect(&layer, &rect_black_dsc, &bg_area);
+    // lv_area_t bg_area = {0, 0, CANVAS_SIZE - 1, CANVAS_SIZE - 1};
+    // lv_draw_rect(&layer, &rect_black_dsc, &bg_area);
 
     // Draw battery
     draw_battery(&layer, state);
@@ -158,8 +158,8 @@ static void draw_middle(lv_obj_t *widget, lv_color_t cbuf[], const struct status
     init_label_dsc(&label_dsc_black, LVGL_BACKGROUND, &lv_font_montserrat_18, LV_TEXT_ALIGN_CENTER);
 
     // Fill background
-    lv_area_t bg_area = {0, 0, CANVAS_SIZE - 1, CANVAS_SIZE - 1};
-    lv_draw_rect(&layer, &rect_black_dsc, &bg_area);
+    // lv_area_t bg_area = {0, 0, CANVAS_SIZE - 1, CANVAS_SIZE - 1};
+    // lv_draw_rect(&layer, &rect_black_dsc, &bg_area);
 
     // Draw circles
     int circle_offsets[5][2] = {
@@ -211,8 +211,8 @@ static void draw_bottom(lv_obj_t *widget, lv_color_t cbuf[], const struct status
     init_label_dsc(&label_dsc, LVGL_FOREGROUND, &lv_font_montserrat_14, LV_TEXT_ALIGN_CENTER);
 
     // Fill background
-    lv_area_t bg_area = {0, 0, CANVAS_SIZE - 1, CANVAS_SIZE - 1};
-    lv_draw_rect(&layer, &rect_black_dsc, &bg_area);
+    // lv_area_t bg_area = {0, 0, CANVAS_SIZE - 1, CANVAS_SIZE - 1};
+    // lv_draw_rect(&layer, &rect_black_dsc, &bg_area);
 
     // Draw layer
     char text[32] = {};
