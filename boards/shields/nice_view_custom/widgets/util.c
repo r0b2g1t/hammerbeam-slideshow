@@ -11,15 +11,28 @@
 LV_IMAGE_DECLARE(bolt);
 
 void rotate_canvas(lv_obj_t *canvas, lv_color_t cbuf[]) {
-    static lv_color_t cbuf_tmp[CANVAS_SIZE * CANVAS_SIZE];
-    memcpy(cbuf_tmp, cbuf, sizeof(cbuf_tmp));
+    static uint8_t cbuf_tmp[CANVAS_SIZE * CANVAS_SIZE * sizeof(lv_color_t) + sizeof(lv_color32_t) * 2];
+    
+    uint32_t stride = lv_draw_buf_width_to_stride(CANVAS_SIZE, LV_COLOR_FORMAT_I1);
+    uint32_t buf_size = stride * CANVAS_SIZE;
+    
+    // Prepend palette
+    lv_color32_t *palette = (lv_color32_t *)cbuf_tmp;
+    palette[0] = LVGL_BACKGROUND_32;
+    palette[1] = LVGL_FOREGROUND_32;
+    
+    // Copy bitmap data after palette
+    memcpy(cbuf_tmp + sizeof(lv_color32_t) * 2, cbuf, buf_size);
+
     lv_image_dsc_t img;
-    img.data = (void *)cbuf_tmp;
+    img.data = (const void *)cbuf_tmp;
     img.header.magic = LV_IMAGE_HEADER_MAGIC;
-    img.header.cf = LV_COLOR_FORMAT_NATIVE;
+    img.header.cf = LV_COLOR_FORMAT_I1;
+    img.header.flags = 0;
     img.header.w = CANVAS_SIZE;
     img.header.h = CANVAS_SIZE;
-    img.header.stride = lv_draw_buf_width_to_stride(CANVAS_SIZE, LV_COLOR_FORMAT_NATIVE);
+    img.header.stride = stride;
+    img.data_size = sizeof(lv_color32_t) * 2 + buf_size;
 
     lv_canvas_fill_bg(canvas, LVGL_BACKGROUND, LV_OPA_COVER);
     
@@ -32,12 +45,7 @@ void rotate_canvas(lv_obj_t *canvas, lv_color_t cbuf[]) {
     img_dsc.pivot.x = CANVAS_SIZE / 2;
     img_dsc.pivot.y = CANVAS_SIZE / 2;
     
-    // In LVGL 9, we draw into the layer. The coordinates in the area determine where.
-    // We want it centered or at 0,0?
-    // lv_canvas_transform(canvas, img, angle, ..., offset_x, offset_y, ...)
-    // The previous code had offset -1, 0.
-    
-    lv_area_t coords = {-1, 0, CANVAS_SIZE - 2, CANVAS_SIZE - 1};
+    lv_area_t coords = {0, 0, CANVAS_SIZE, CANVAS_SIZE};
     
     lv_draw_image(&layer, &img_dsc, &coords);
 }
