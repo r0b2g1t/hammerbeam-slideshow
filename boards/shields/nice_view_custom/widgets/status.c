@@ -344,12 +344,18 @@ int zmk_widget_status_init(struct zmk_widget_status *widget, lv_obj_t *parent) {
     lv_obj_t *top = lv_canvas_create(widget->obj);
     lv_obj_align(top, LV_ALIGN_TOP_RIGHT, 0, 0);
     lv_canvas_set_buffer(top, widget->cbuf, CANVAS_SIZE, CANVAS_SIZE, LV_COLOR_FORMAT_NATIVE);
+    lv_canvas_set_palette(top, 0, LVGL_BACKGROUND);
+    lv_canvas_set_palette(top, 1, LVGL_FOREGROUND);
     lv_obj_t *middle = lv_canvas_create(widget->obj);
     lv_obj_align(middle, LV_ALIGN_TOP_LEFT, 24, 0);
     lv_canvas_set_buffer(middle, widget->cbuf2, CANVAS_SIZE, CANVAS_SIZE, LV_COLOR_FORMAT_NATIVE);
+    lv_canvas_set_palette(middle, 0, LVGL_BACKGROUND);
+    lv_canvas_set_palette(middle, 1, LVGL_FOREGROUND);
     lv_obj_t *bottom = lv_canvas_create(widget->obj);
     lv_obj_align(bottom, LV_ALIGN_TOP_LEFT, -44, 0);
     lv_canvas_set_buffer(bottom, widget->cbuf3, CANVAS_SIZE, CANVAS_SIZE, LV_COLOR_FORMAT_NATIVE);
+    lv_canvas_set_palette(bottom, 0, LVGL_BACKGROUND);
+    lv_canvas_set_palette(bottom, 1, LVGL_FOREGROUND);
 
     sys_slist_append(&widgets, &widget->node);
     widget_battery_status_init();

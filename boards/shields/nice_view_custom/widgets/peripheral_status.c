@@ -179,6 +179,8 @@ int zmk_widget_status_init(struct zmk_widget_status *widget, lv_obj_t *parent) {
     lv_obj_t *top = lv_canvas_create(widget->obj);
     lv_obj_align(top, LV_ALIGN_TOP_RIGHT, 0, 0);
     lv_canvas_set_buffer(top, widget->cbuf, CANVAS_SIZE, CANVAS_SIZE, LV_COLOR_FORMAT_NATIVE);
+    lv_canvas_set_palette(top, 0, LVGL_BACKGROUND);
+    lv_canvas_set_palette(top, 1, LVGL_FOREGROUND);
 
     lv_obj_t * art = lv_animimg_create(widget->obj);
     lv_obj_center(art);
